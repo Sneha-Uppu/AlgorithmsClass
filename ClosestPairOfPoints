@@ -1,0 +1,103 @@
+import java.util.Arrays;
+import java.util.Comparator;
+
+public class ClosestPairOfPoints {
+    public static void main(String[] args) {
+        int[] sizes = {100, 1000, 10000, 100000, 1000000};
+        for (int size : sizes) {
+            Point[] points = generateRandomPoints(size);
+            long startTime = System.nanoTime();
+            double minDist = closestPair(points);
+            long endTime = System.nanoTime();
+            System.out.printf("Number of points: %d, Minimum Distance between the points: %.6f,\n Time taken: %d ns%n", size, minDist, (endTime - startTime));
+        }
+    }
+
+    static class Point {
+        double x, y;
+        Point(double x, double y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    public static Point[] generateRandomPoints(int n) {
+        Point[] points = new Point[n];
+        for (int i = 0; i < n; i++) {
+            points[i] = new Point(Math.random() * 10000, Math.random() * 10000);
+        }
+        return points;
+    }
+
+    public static double closestPair(Point[] points) {
+        Point[] ptx = points.clone();
+        Point[] pty = points.clone();
+        Arrays.sort(ptx, Comparator.comparingDouble(p -> p.x));
+        Arrays.sort(pty, Comparator.comparingDouble(p -> p.y));
+        return closestPair(ptx, pty, 0, points.length - 1);
+    }
+
+    private static double closestPair(Point[] ptx, Point[] pty, int left, int right) {
+        if (right - left <= 3) {
+            return closestPoints(ptx, left, right);
+        }
+
+        int mid = (left + right) / 2;
+        Point midPoint = ptx[mid];
+
+        Point[] ptyleft = new Point[mid - left + 1];
+        Point[] ptyright = new Point[right - mid];
+        int li = 0, ri = 0;
+        for (int i = 0; i < pty.length; i++) {
+            if (pty[i].x <= midPoint.x) {
+                ptyleft[li++] = pty[i];
+            } else {
+                ptyright[ri++] = pty[i];
+            }
+        }
+
+        double dleft = closestPair(ptx, ptyleft, left, mid);
+        double dright = closestPair(ptx, ptyright, mid + 1, right);
+        double dist = Math.min(dleft, dright);
+
+        Point[] strip = new Point[right - left + 1];
+        int j = 0;
+        for (int i = 0; i < pty.length; i++) {
+            if (Math.abs(pty[i].x - midPoint.x) < dist) {
+                strip[j++] = pty[i];
+            }
+        }
+
+        return Math.min(dist, stripClosest(strip, j, dist));
+    }
+
+    private static double closestPoints(Point[] points, int left, int right) {
+        double minDist = Double.MAX_VALUE;
+        for (int i = left; i <= right; i++) {
+            for (int j = i + 1; j <= right; j++) {
+                double dist = distance(points[i], points[j]);
+                if (dist < minDist) {
+                    minDist = dist;
+                }
+            }
+        }
+        return minDist;
+    }
+
+    private static double stripClosest(Point[] strip, int size, double d) {
+        double minDist = d;
+        for (int i = 0; i < size; i++) {
+            for (int j = i + 1; j < size && (strip[j].y - strip[i].y) < minDist; j++) {
+                double dist = distance(strip[i], strip[j]);
+                if (dist < minDist) {
+                    minDist = dist;
+                }
+            }
+        }
+        return minDist;
+    }
+
+    private static double distance(Point p1, Point p2) {
+        return Math.sqrt((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y));
+    }
+}
