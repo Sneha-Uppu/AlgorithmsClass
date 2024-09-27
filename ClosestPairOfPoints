@@ -1,14 +1,14 @@
 import java.util.Arrays;
 import java.util.Comparator;
 
-public class ClosestPairOfPoints {
+public class PairOfPoints {
     public static void main(String[] args) {
         int n = 100000; 
         Point[] points = generateRandomPoints(n);
         long startTime = System.nanoTime();
-        double minDist = closestPair(points);
+        double minDist = clstPair(points);
         long endTime = System.nanoTime();
-        System.out.printf("Number of points: "+n+", Minimum Distance between the points: "+minDist+"\n Time taken: "+(endTime - startTime));
+        System.out.println("Number of points: "+n+", Minimum Distance between the points: "+minDist+"\n Time taken: "+(endTime - startTime));
     }
 
     static class Point {
@@ -27,17 +27,17 @@ public class ClosestPairOfPoints {
         return pt;
     }
 
-    public static double closestPair(Point[] pt) {
+    public static double clstPair(Point[] pt) {
         Point[] ptx = pt.clone();
         Point[] pty = pt.clone();
         Arrays.sort(ptx, Comparator.comparingDouble(p -> p.x));
         Arrays.sort(pty, Comparator.comparingDouble(p -> p.y));
-        return closestPair(ptx, pty, 0, pt.length - 1);
+        return clstPair(ptx, pty, 0, pt.length - 1);
     }
 
-    private static double closestPair(Point[] ptx, Point[] pty, int left, int right) {
+    private static double clstPair(Point[] ptx, Point[] pty, int left, int right) {
         if (right - left <= 3) {
-            return closestPoints(ptx, left, right);
+            return clstPoints(ptx, left, right);
         }
 
         int mid = (left + right) / 2;
@@ -54,8 +54,8 @@ public class ClosestPairOfPoints {
             }
         }
 
-        double dleft = closestPair(ptx, ptyleft, left, mid);
-        double dright = closestPair(ptx, ptyright, mid + 1, right);
+        double dleft = clstPair(ptx, ptyleft, left, mid);
+        double dright = clstPair(ptx, ptyright, mid + 1, right);
         double dist = Math.min(dleft, dright);
 
         Point[] pt = new Point[right - left + 1];
@@ -69,7 +69,7 @@ public class ClosestPairOfPoints {
         return Math.min(dist, merge(pt, j, dist));
     }
 
-    private static double closestPoints(Point[] pt, int left, int right) {
+    private static double clstPoints(Point[] pt, int left, int right) {
         double minDist = 1000000000;
         for (int i = left; i <= right; i++) {
             for (int j = i + 1; j <= right; j++) {
