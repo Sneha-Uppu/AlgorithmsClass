@@ -20,19 +20,19 @@ public class ClosestPairOfPoints {
     }
 
     public static Point[] generateRandomPoints(int n) {
-        Point[] p = new Point[n];
+        Point[] pt = new Point[n];
         for (int i = 0; i < n; i++) {
-            p[i] = new Point(Math.random(), Math.random());
+            pt[i] = new Point(Math.random(), Math.random());
         }
-        return p;
+        return pt;
     }
 
-    public static double closestPair(Point[] points) {
-        Point[] ptx = points.clone();
-        Point[] pty = points.clone();
+    public static double closestPair(Point[] pt) {
+        Point[] ptx = pt.clone();
+        Point[] pty = pt.clone();
         Arrays.sort(ptx, Comparator.comparingDouble(p -> p.x));
         Arrays.sort(pty, Comparator.comparingDouble(p -> p.y));
-        return closestPair(ptx, pty, 0, points.length - 1);
+        return closestPair(ptx, pty, 0, pt.length - 1);
     }
 
     private static double closestPair(Point[] ptx, Point[] pty, int left, int right) {
@@ -58,22 +58,22 @@ public class ClosestPairOfPoints {
         double dright = closestPair(ptx, ptyright, mid + 1, right);
         double dist = Math.min(dleft, dright);
 
-        Point[] p = new Point[right - left + 1];
+        Point[] pt = new Point[right - left + 1];
         int j = 0;
         for (int i = 0; i < pty.length; i++) {
             if (Math.abs(pty[i].x - midPoint.x) < dist) {
-                p[j++] = pty[i];
+                pt[j++] = pty[i];
             }
         }
 
-        return Math.min(dist, merge(p, j, dist));
+        return Math.min(dist, merge(pt, j, dist));
     }
 
-    private static double closestPoints(Point[] points, int left, int right) {
-        double minDist = Double.MAX_VALUE;
+    private static double closestPoints(Point[] pt, int left, int right) {
+        double minDist = 1000000000;
         for (int i = left; i <= right; i++) {
             for (int j = i + 1; j <= right; j++) {
-                double dist = distance(points[i], points[j]);
+                double dist = distance(pt[i], pt[j]);
                 if (dist < minDist) {
                     minDist = dist;
                 }
@@ -82,11 +82,11 @@ public class ClosestPairOfPoints {
         return minDist;
     }
 
-    private static double merge(Point[] p, int size, double d) {
+    private static double merge(Point[] pt, int size, double d) {
         double minDist = d;
         for (int i = 0; i < size; i++) {
-            for (int j = i + 1; j < size && (p[j].y - p[i].y) < minDist; j++) {
-                double dist = distance(p[i], p[j]);
+            for (int j = i + 1; j < size && (pt[j].y - pt[i].y) < minDist; j++) {
+                double dist = distance(pt[i], pt[j]);
                 if (dist < minDist) {
                     minDist = dist;
                 }
@@ -95,7 +95,7 @@ public class ClosestPairOfPoints {
         return minDist;
     }
 
-    private static double distance(Point p1, Point p2) {
-        return Math.sqrt((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y));
+    private static double distance(Point pt1, Point pt2) {
+        return Math.sqrt((pt1.x - pt2.x) * (pt1.x - pt2.x) + (pt1.y - pt2.y) * (pt1.y - pt2.y));
     }
 }
