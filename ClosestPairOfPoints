@@ -1,6 +1,5 @@
 import java.util.Arrays;
 import java.util.Comparator;
-
 public class PairOfPoints {
     public static void main(String[] args) {
         int n = 100000; 
@@ -10,7 +9,6 @@ public class PairOfPoints {
         long endTime = System.nanoTime();
         System.out.println("Number of points: "+n+", Minimum Distance between the points: "+minDist+"\n Time taken: "+(endTime - startTime));
     }
-
     static class Point {
         double x, y;
         Point(double x, double y) {
@@ -18,7 +16,6 @@ public class PairOfPoints {
             this.y = y;
         }
     }
-
     public static Point[] generateRandomPoints(int n) {
         Point[] pt = new Point[n];
         for (int i = 0; i < n; i++) {
@@ -26,7 +23,6 @@ public class PairOfPoints {
         }
         return pt;
     }
-
     public static double clstPair(Point[] pt) {
         Point[] ptx = pt.clone();
         Point[] pty = pt.clone();
@@ -34,15 +30,12 @@ public class PairOfPoints {
         Arrays.sort(pty, Comparator.comparingDouble(p -> p.y));
         return clstPair(ptx, pty, 0, pt.length - 1);
     }
-
     private static double clstPair(Point[] ptx, Point[] pty, int left, int right) {
         if (right - left <= 3) {
             return clstPoints(ptx, left, right);
         }
-
         int mid = (left + right) / 2;
         Point midPoint = ptx[mid];
-
         Point[] ptyleft = new Point[mid - left + 1];
         Point[] ptyright = new Point[right - mid];
         int li = 0, ri = 0;
@@ -53,11 +46,9 @@ public class PairOfPoints {
                 ptyright[ri++] = pty[i];
             }
         }
-
         double dleft = clstPair(ptx, ptyleft, left, mid);
         double dright = clstPair(ptx, ptyright, mid + 1, right);
         double dist = Math.min(dleft, dright);
-
         Point[] pt = new Point[right - left + 1];
         int j = 0;
         for (int i = 0; i < pty.length; i++) {
@@ -65,10 +56,8 @@ public class PairOfPoints {
                 pt[j++] = pty[i];
             }
         }
-
         return Math.min(dist, merge(pt, j, dist));
     }
-
     private static double clstPoints(Point[] pt, int left, int right) {
         double minDist = 1000000000;
         for (int i = left; i <= right; i++) {
@@ -81,7 +70,6 @@ public class PairOfPoints {
         }
         return minDist;
     }
-
     private static double merge(Point[] pt, int size, double d) {
         double minDist = d;
         for (int i = 0; i < size; i++) {
@@ -94,7 +82,6 @@ public class PairOfPoints {
         }
         return minDist;
     }
-
     private static double distance(Point pt1, Point pt2) {
         return Math.sqrt((pt1.x - pt2.x) * (pt1.x - pt2.x) + (pt1.y - pt2.y) * (pt1.y - pt2.y));
     }
